@@ -22,7 +22,7 @@ class SymptomsContainer extends StatelessWidget {
           ]
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
             decoration: BoxDecoration(

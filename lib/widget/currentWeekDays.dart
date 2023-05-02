@@ -1,42 +1,71 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 
-class CurrentWeekDatesWidget extends StatelessWidget {
-  const CurrentWeekDatesWidget({super.key});
+class CurrentMonthDates extends StatefulWidget {
+  const CurrentMonthDates({Key? key}) : super(key: key);
 
+  @override
+  State<CurrentMonthDates> createState() => _CurrentMonthDatesState();
+}
+
+class _CurrentMonthDatesState extends State<CurrentMonthDates> {
+  late DateTime selectedDate;
+
+  @override
+  void initState() {
+    selectedDate=DateTime.now();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
-    List<Widget> days = [];
+    DateTime firstDayOfMonth = DateTime(now.year, now.month, 1);
+    int daysInMonth = DateTime(now.year, now.month + 1, 0).day;
 
-    DateTime startOfWeek = now.subtract(Duration(days: now.weekday));
-    DateTime endOfWeek = now.add(Duration(days: 7 - now.weekday));
+    return SizedBox(
+      height: 10.h,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: daysInMonth,
+        itemBuilder: (BuildContext context, int index) {
+          DateTime date = firstDayOfMonth.add(Duration(days: index));
+          bool isCurrentDay = date.day == now.day;
+          bool isSelectedDay = date.day == selectedDate.day;
 
-    for (DateTime date = startOfWeek; date.isBefore(endOfWeek); date = date.add(const Duration(days: 1))) {
-      String formattedDate = DateFormat('dd').format(date);
-      String formattedDay = DateFormat('EEE').format(date);
-
-      days.add(
-        Column(
-          children: [
-            Text(
-              formattedDate,
-              style: const TextStyle(fontSize: 16),
+          return Padding(
+            padding: EdgeInsets.symmetric(horizontal: 2.2.w,vertical: 1.5.h),
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  selectedDate = date;
+                });
+              },
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    DateFormat('EEE').format(date),
+                    style: TextStyle(fontSize: 10.sp,color: Colors.grey),
+                  ),
+                  const Spacer(),
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: isSelectedDay ? Colors.pinkAccent : Colors.transparent,
+                    ),
+                    child: Text(
+                      DateFormat('d').format(date),
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500,color: isSelectedDay?Colors.white:Colors.black),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            SizedBox(height: 1.5.h,),
-            Text(
-              formattedDay,
-              style: const TextStyle(fontSize: 16),
-            ),
-          ],
-        ),
-      );
-    }
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: days,
+          );
+        },
+      ),
     );
   }
 }

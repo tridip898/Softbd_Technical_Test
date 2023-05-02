@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tchnical_test/screen/first_page.dart';
 import 'package:flutter_tchnical_test/screen/second_page.dart';
+import 'package:flutter_tchnical_test/screen/selected_items_screen.dart';
 import 'package:sizer/sizer.dart';
 import 'package:get/get.dart';
 
@@ -18,8 +19,9 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         initialRoute: '/second',
         getPages: [
-          GetPage(name: '/', page: ()=>FirstPage()),
-          GetPage(name: '/second', page: ()=>SecondPage()),
+          GetPage(name: '/', page: ()=>const FirstPage()),
+          GetPage(name: '/second', page: ()=>const SecondPage()),
+          GetPage(name: '/detail', page: ()=>const SelectedItemScreen()),
         ],
       );
     });
