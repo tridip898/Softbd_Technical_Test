@@ -21,7 +21,6 @@ class MyApp extends StatelessWidget {
         getPages: [
           GetPage(name: '/', page: ()=>const FirstPage()),
           GetPage(name: '/second', page: ()=>const SecondPage()),
-          GetPage(name: '/detail', page: ()=>const SelectedItemScreen()),
         ],
       );
     });

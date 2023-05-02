@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_tchnical_test/screen/selected_items_screen.dart';
 import 'package:get/get.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,9 @@ class SecondPage extends StatefulWidget {
 class _SecondPageState extends State<SecondPage> {
   DateTime day = DateTime.now();
   Future<ApiDataModel>? fetchDatas;
+  // List<ApiDataModel>? myDataList;
+  // List<ApiDataModel>? selectedItems;
+  Set<SubSymptom> _selectedItems={};
 
   Future<ApiDataModel> fetchData() async {
     final response =
@@ -35,12 +39,18 @@ class _SecondPageState extends State<SecondPage> {
   void initState() {
     super.initState();
     fetchDatas = fetchData();
+    // fetchDatas!.then((data){
+    //   setState(() {
+    //     myDataList=data as List<ApiDataModel>?;
+    //   });
+    // });
   }
+
 
   void showCustomDialog(BuildContext context) {
      showDialog(
         context: context,
-        builder: (context) {
+        builder: (_) {
           return Dialog(
             backgroundColor: Colors.pink.shade300,
             shape:
@@ -103,41 +113,6 @@ class _SecondPageState extends State<SecondPage> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.grey.shade200,
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: GestureDetector(
-          onTap: (){
-            Get.toNamed('/detail');
-          },
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
-            width: 80.w,
-            decoration: BoxDecoration(
-                color: Colors.pink.shade300,
-                borderRadius: BorderRadius.circular(10)),
-            child: Row(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  padding: const EdgeInsets.all(10),
-                  child: Image.asset(
-                    'lib/asset/Polygon 1.png',
-                    height: 20,
-                  ),
-                ),
-                SizedBox(
-                  width: 4.w,
-                ),
-                Text(
-                  'VIEW ALL SELECTED ITEMS',
-                  style: TextStyle(fontSize: 11.sp, color: Colors.white60),
-                )
-              ],
-            ),
-          ),
-        ),
         body: FutureBuilder<ApiDataModel>(
           future: fetchDatas,
           builder: (context, snapshot) {
@@ -202,11 +177,14 @@ class _SecondPageState extends State<SecondPage> {
                                   child: ListView(
                                     scrollDirection: Axis.horizontal,
                                     children: List.generate(snapshot.data!.data.symptoms[index].subSymptom.length, (subIndex){
+
+                                      final item=SubSymptom(id: snapshot.data!.data.symptoms[index].subSymptom[subIndex].id, icon: snapshot.data!.data.symptoms[index].subSymptom[subIndex].icon, title: snapshot.data!.data.symptoms[index].subSymptom[subIndex].title);
                                       return GestureDetector(
                                         onTap: (){
+                                          // selectedItems = myDataList!.where((item) => item.data.symptoms[index].subSymptom[subIndex].isSelected).toList();
                                           snapshot.data!.data.symptoms[index].subSymptom[subIndex].isSelected=true;
                                           setState(() {
-
+                                            _selectedItems.add(item);
                                           });
                                         },
                                         child: Padding(
@@ -259,6 +237,41 @@ class _SecondPageState extends State<SecondPage> {
               return const Center(child: CircularProgressIndicator(),);
             }
           },
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: GestureDetector(
+          onTap: (){
+            Navigator.of(context).push(MaterialPageRoute(builder: (_)=>SelectedItemScreen(selectedItems: _selectedItems.toList(),)));
+          },
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
+            width: 80.w,
+            decoration: BoxDecoration(
+                color: Colors.pink.shade300,
+                borderRadius: BorderRadius.circular(10)),
+            child: Row(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  padding: const EdgeInsets.all(10),
+                  child: Image.asset(
+                    'lib/asset/Polygon 1.png',
+                    height: 20,
+                  ),
+                ),
+                SizedBox(
+                  width: 4.w,
+                ),
+                Text(
+                  'VIEW ALL SELECTED ITEMS',
+                  style: TextStyle(fontSize: 11.sp, color: Colors.white60),
+                )
+              ],
+            ),
+          ),
         ),
       ),
     );

@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:get/get.dart';
+import 'package:flutter_tchnical_test/model/api_data_model.dart';
 
 class SelectedItemScreen extends StatelessWidget {
-  const SelectedItemScreen({Key? key}) : super(key: key);
+   late List<SubSymptom> selectedItems;
+   SelectedItemScreen({Key? key, required this.selectedItems}) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
+
     return SafeArea(child: Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -18,7 +22,6 @@ class SelectedItemScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(5),
@@ -45,25 +48,30 @@ class SelectedItemScreen extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: ListView.builder(
+            child: ListView.separated(
+              separatorBuilder: (context,i)=>Divider(thickness: 1,color: Colors.grey.shade300,indent: 30,endIndent: 30,height: 0.5.h,),
                 shrinkWrap: true,
-                itemCount: 10,
+                itemCount: selectedItems.length,
                 itemBuilder: (context,index){
-              return ListTile(
-                leading: Container(
-                  padding: const EdgeInsets.all(7),
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.pinkAccent,
-                      border: Border.all(
-                          color: Colors.pink, width: 1)),
-                  child: Image.asset(
-                    'lib/asset/sad.png',
-                    height: 25,
-                    color: Colors.white60,
+                  selectedItems=selectedItems.toSet().toList();
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: 3.w),
+                child: ListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(7),
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.pinkAccent,
+                        border: Border.all(
+                            color: Colors.pink, width: 1)),
+                    child: Image.network(
+                      selectedItems[index].icon,
+                      height: 25,
+                      color: Colors.white60,
+                    ),
                   ),
+                  title: Text(selectedItems[index].title),
                 ),
-                title: Text("Title"),
               );
             }),
           )

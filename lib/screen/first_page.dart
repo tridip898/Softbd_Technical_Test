@@ -195,7 +195,7 @@ class _FirstPageState extends State<FirstPage> {
                 Text(
                   "Explore",
                   style:
-                      TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w500),
+                      TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500),
                 ),
                 SizedBox(
                   height: 1.h,
@@ -240,7 +240,7 @@ class _FirstPageState extends State<FirstPage> {
                     children: [
                       Text(
                         'Demo App',
-                        style: TextStyle(fontSize: 16.sp, color: Colors.purple),
+                        style: TextStyle(fontSize: 14.sp, color: Colors.purple,fontWeight: FontWeight.w500),
                       ),
                       SizedBox(
                         height: 2.h,
@@ -273,7 +273,7 @@ class _FirstPageState extends State<FirstPage> {
                 ),
                 Text(
                   "Unlock Premium",
-                  style: TextStyle(fontSize: 16.sp, color: Colors.pinkAccent),
+                  style: TextStyle(fontSize: 14.sp,fontWeight: FontWeight.w500, color: Colors.pinkAccent),
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 2.h, horizontal: 2.w),
@@ -346,7 +346,7 @@ class _FirstPageState extends State<FirstPage> {
                       Text(
                         'Add My Partner',
                         style: TextStyle(
-                            fontSize: 15.sp,
+                            fontSize: 14.sp,
                             color: Colors.purple,
                             fontWeight: FontWeight.w500),
                       ),
