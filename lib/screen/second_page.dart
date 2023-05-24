@@ -1,11 +1,9 @@
-import 'dart:convert';
+import 'package:flutter_tchnical_test/controller/api_controller.dart';
 import 'package:flutter_tchnical_test/screen/selected_items_screen.dart';
 import 'package:get/get.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:intl/intl.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_tchnical_test/model/api_data_model.dart';
 
 class SecondPage extends StatefulWidget {
@@ -17,96 +15,10 @@ class SecondPage extends StatefulWidget {
 
 class _SecondPageState extends State<SecondPage> {
   DateTime day = DateTime.now();
-  Future<ApiDataModel>? fetchDatas;
-  // List<ApiDataModel>? myDataList;
-  // List<ApiDataModel>? selectedItems;
-  Set<SubSymptom> _selectedItems={};
 
-  Future<ApiDataModel> fetchData() async {
-    final response =
-        await http.get(Uri.parse('https://api.npoint.io/30bd2c680d812dd23df1'));
-    if (kDebugMode) {
-      print(response.body);
-    }
-    if (response.statusCode == 200) {
-      return ApiDataModel.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Failed to load album');
-    }
-  }
+  Set<SubSymptom> _selectedItems = {};
 
-  @override
-  void initState() {
-    super.initState();
-    fetchDatas = fetchData();
-    // fetchDatas!.then((data){
-    //   setState(() {
-    //     myDataList=data as List<ApiDataModel>?;
-    //   });
-    // });
-  }
-
-
-  void showCustomDialog(BuildContext context) {
-     showDialog(
-        context: context,
-        builder: (_) {
-          return Dialog(
-            backgroundColor: Colors.pink.shade300,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            child: Container(
-              height: 15.h,
-              width: 60.w,
-              padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 2.h),
-              child: Column(
-                children: [
-                  SizedBox(
-                    width: 50.w,
-                    child: Text(
-                      'ARE YOU SURE YOU WANT TO SELECT THIS',
-                      style: TextStyle(fontSize: 10.sp, color: Colors.white),
-                      maxLines: 2,
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                          onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.pink.shade300,
-                          padding: EdgeInsets.symmetric(horizontal: 4.w,vertical: 1.h),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
-                        ),
-                          child: const Text(
-                            'Yes',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                      ),
-                      SizedBox(width: 4.w,),
-                      ElevatedButton(
-                        onPressed: () {
-                          Get.back();
-                        },
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.pink.shade300,
-                            padding: EdgeInsets.symmetric(horizontal: 4.w,vertical: 1.h),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
-                        ),
-                        child: const Text(
-                          'No',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      )
-                    ],
-                  )
-                ],
-              ),
-            ),
-          );
-        });
-  }
+  final _apiController = Get.put(ApiController());
 
   @override
   Widget build(BuildContext context) {
@@ -114,15 +26,16 @@ class _SecondPageState extends State<SecondPage> {
       child: Scaffold(
         backgroundColor: Colors.grey.shade200,
         body: FutureBuilder<ApiDataModel>(
-          future: fetchDatas,
+          future: _apiController.fetchDatas,
           builder: (context, snapshot) {
-            if(snapshot.hasData){
+            if (snapshot.hasData) {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  ///appbar
                   Padding(
                     padding:
-                    EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
+                        EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -154,66 +67,134 @@ class _SecondPageState extends State<SecondPage> {
                       ],
                     ),
                   ),
+
+                  ///api data
                   Expanded(
                     child: ListView.builder(
                         shrinkWrap: true,
                         itemCount: snapshot.data!.data.symptoms.length,
-                        itemBuilder: (context,index){
+                        itemBuilder: (context, index) {
                           return Padding(
                             padding: EdgeInsets.symmetric(horizontal: 1.w),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: EdgeInsets.only(left: 4.w,top: 1.h),
+                                  padding: EdgeInsets.only(left: 4.w, top: 1.h),
                                   child: Text(
                                     snapshot.data!.data.symptoms[index].title,
                                     style: TextStyle(
-                                        fontSize: 12.sp, fontWeight: FontWeight.w500),
+                                        fontSize: 12.sp,
+                                        fontWeight: FontWeight.w500),
                                   ),
                                 ),
                                 SizedBox(
                                   height: 10.h,
                                   child: ListView(
                                     scrollDirection: Axis.horizontal,
-                                    children: List.generate(snapshot.data!.data.symptoms[index].subSymptom.length, (subIndex){
-
-                                      final item=SubSymptom(id: snapshot.data!.data.symptoms[index].subSymptom[subIndex].id, icon: snapshot.data!.data.symptoms[index].subSymptom[subIndex].icon, title: snapshot.data!.data.symptoms[index].subSymptom[subIndex].title);
+                                    children: List.generate(
+                                        snapshot.data!.data.symptoms[index]
+                                            .subSymptom.length, (subIndex) {
+                                      final item = SubSymptom(
+                                          id: snapshot.data!.data.symptoms[index].subSymptom[subIndex]
+                                              .id,
+                                          icon: snapshot.data!.data.symptoms[index].subSymptom[subIndex].icon,
+                                          title: snapshot.data!.data.symptoms[index].subSymptom[subIndex].title);
                                       return GestureDetector(
-                                        onTap: (){
+                                        onTap: () {
+                                          Get.defaultDialog(
+                                            title: "",
+                                              content: Text(
+                                                "ARE YOU SURE TO WANT TO SELECT THIS?",
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    fontSize: 12.sp,
+                                                    color: Colors.white),
+                                              ),
+                                              backgroundColor:
+                                                  Colors.pinkAccent.shade100,
+                                              onCancel: () {
+                                                Get.back();
+                                              },
+                                              textCancel: "NO",
+                                              cancelTextColor: Colors.white,
+                                              onConfirm: () {
+                                                snapshot.data!.data.symptoms[index].subSymptom[subIndex].isSelected = true;
+                                                _selectedItems.add(item);
+                                                Get.back();
+                                              },
+                                              textConfirm: "YES",
+                                              confirmTextColor: Colors.white,
+                                              barrierDismissible: true,
+                                              buttonColor:
+                                                  Colors.pinkAccent.shade100);
+
                                           // selectedItems = myDataList!.where((item) => item.data.symptoms[index].subSymptom[subIndex].isSelected).toList();
-                                          snapshot.data!.data.symptoms[index].subSymptom[subIndex].isSelected=true;
-                                          setState(() {
-                                            _selectedItems.add(item);
-                                          });
+                                          // snapshot
+                                          //     .data!
+                                          //     .data
+                                          //     .symptoms[index]
+                                          //     .subSymptom[subIndex]
+                                          //     .isSelected = true;
+                                          // setState(() {
+                                          //   _selectedItems.add(item);
+                                          // });
                                         },
                                         child: Padding(
                                           padding: EdgeInsets.only(top: 1.h),
                                           child: Column(
                                             children: [
                                               Container(
-                                                padding: const EdgeInsets.all(7),
+                                                padding:
+                                                    const EdgeInsets.all(7),
                                                 decoration: BoxDecoration(
                                                     shape: BoxShape.circle,
-                                                    color: snapshot.data!.data.symptoms[index].subSymptom[subIndex].isSelected ? Colors.pinkAccent:Colors.grey.shade100,
+                                                    color: snapshot
+                                                            .data!
+                                                            .data
+                                                            .symptoms[index]
+                                                            .subSymptom[
+                                                                subIndex]
+                                                            .isSelected
+                                                        ? Colors.pinkAccent
+                                                        : Colors.grey.shade100,
                                                     border: Border.all(
-                                                        color: Colors.pink, width: 1)),
+                                                        color: Colors.pink,
+                                                        width: 1)),
                                                 child: Image.network(
-                                                  snapshot.data!.data.symptoms[index]
-                                                      .subSymptom[subIndex].icon,
+                                                  snapshot
+                                                      .data!
+                                                      .data
+                                                      .symptoms[index]
+                                                      .subSymptom[subIndex]
+                                                      .icon,
                                                   height: 25,
-                                                  color: snapshot.data!.data.symptoms[index].subSymptom[subIndex].isSelected ? Colors.white60:Colors.grey,
+                                                  color: snapshot
+                                                          .data!
+                                                          .data
+                                                          .symptoms[index]
+                                                          .subSymptom[subIndex]
+                                                          .isSelected
+                                                      ? Colors.white60
+                                                      : Colors.grey,
                                                 ),
                                               ),
-                                              const SizedBox(height: 2,),
+                                              const SizedBox(
+                                                height: 2,
+                                              ),
                                               SizedBox(
                                                 width: 20.w,
                                                 child: Text(
-                                                  snapshot.data!.data.symptoms[index]
-                                                      .subSymptom[subIndex].title,
+                                                  snapshot
+                                                      .data!
+                                                      .data
+                                                      .symptoms[index]
+                                                      .subSymptom[subIndex]
+                                                      .title,
                                                   style: TextStyle(
                                                       fontSize: 9.sp,
-                                                      color: Colors.grey.shade500),
+                                                      color:
+                                                          Colors.grey.shade500),
                                                   textAlign: TextAlign.center,
                                                 ),
                                               )
@@ -224,27 +205,31 @@ class _SecondPageState extends State<SecondPage> {
                                     }),
                                   ),
                                 )
-
                               ],
                             ),
                           );
-
                         }),
                   )
                 ],
               );
-            }else{
-              return const Center(child: CircularProgressIndicator(),);
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
             }
           },
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: GestureDetector(
-          onTap: (){
-            Navigator.of(context).push(MaterialPageRoute(builder: (_)=>SelectedItemScreen(selectedItems: _selectedItems.toList(),)));
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (_) => SelectedItemScreen(
+                      selectedItems: _selectedItems.toList(),
+                    )));
           },
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
+            margin: EdgeInsets.only(bottom: 1.h),
             width: 80.w,
             decoration: BoxDecoration(
                 color: Colors.pink.shade300,
